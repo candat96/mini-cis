@@ -45,6 +45,15 @@ export class CreateUserDto {
   phone: string;
 
   @ApiProperty({
+    description: 'Họ và tên đầy đủ',
+    example: 'Nguyễn Văn A',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  fullname?: string;
+
+  @ApiProperty({
     description: 'User role',
     enum: UserRole,
     example: UserRole.RECEPTIONIST,

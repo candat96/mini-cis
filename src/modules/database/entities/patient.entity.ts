@@ -10,6 +10,9 @@ export class Patient extends BaseEntity {
   @Column()
   phone: string;
 
+  @Column({ unique: true })
+  code: string;
+
   @Column({
     type: 'enum',
     enum: Gender,
@@ -22,4 +25,7 @@ export class Patient extends BaseEntity {
 
   @Column({ name: 'occupation', nullable: true })
   occupation: string;
+
+  @Column({ type: 'date', nullable: true })
+  birthDate: Date;
 }

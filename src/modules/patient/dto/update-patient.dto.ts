@@ -1,6 +1,7 @@
 import { Gender } from '@modules/database/enums/gender.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UpdatePatientDto {
   @ApiPropertyOptional({ description: 'Tên bệnh nhân' })
@@ -31,4 +32,14 @@ export class UpdatePatientDto {
   @IsOptional()
   @IsString()
   occupation?: string;
+
+  @ApiPropertyOptional({ 
+    description: 'Ngày sinh',
+    example: '1990-01-01',
+    type: Date
+  })
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  birthDate?: Date;
 }

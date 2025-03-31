@@ -18,10 +18,43 @@ export class PatientService {
     private readonly patientRepository: Repository<Patient>,
   ) {}
 
+  /**
+   * Tạo mã bệnh nhân tự động
+   * @returns Mã bệnh nhân mới theo định dạng BN000001
+   */
+  private async generatePatientCode(): Promise<string> {
+    // Lấy bệnh nhân có mã lớn nhất
+    const lastPatient = await this.patientRepository.findOne({
+      order: { code: 'DESC' },
+    });
+
+    let nextNumber = 1;
+    
+    // Nếu đã có bệnh nhân, tăng số lên 1
+    if (lastPatient && lastPatient.code) {
+      // Lấy phần số từ mã bệnh nhân (bỏ 'BN' ở đầu)
+      const lastNumber = parseInt(lastPatient.code.substring(2), 10);
+      if (!isNaN(lastNumber)) {
+        nextNumber = lastNumber + 1;
+      }
+    }
+
+    // Tạo mã mới với định dạng BN + 6 chữ số
+    return `BN${nextNumber.toString().padStart(6, '0')}`;
+  }
+
   async createPatient(
     createPatientDto: CreatePatientDto,
   ): Promise<PatientResponseDto> {
-    const patient = this.patientRepository.create(createPatientDto);
+    // Tạo mã bệnh nhân tự động
+    const code = await this.generatePatientCode();
+    
+    // Tạo bệnh nhân mới với mã tự động
+    const patient = this.patientRepository.create({
+      ...createPatientDto,
+      code,
+    });
+    
     const savedPatient = await this.patientRepository.save(patient);
     return plainToInstance(PatientResponseDto, savedPatient);
   }
@@ -29,7 +62,7 @@ export class PatientService {
   async getAllPatients(
     query: PatientQueryDto,
   ): Promise<PaginatedPatientsResponseDto> {
-    const { page = 1, limit = 10, name, phone } = query;
+    const { page = 1, limit = 10, name, phone, code } = query;
 
     const whereConditions = {};
 
@@ -39,6 +72,10 @@ export class PatientService {
 
     if (phone) {
       whereConditions['phone'] = ILike(`%${phone}%`);
+    }
+    
+    if (code) {
+      whereConditions['code'] = ILike(`%${code}%`);
     }
 
     const [patients, total] = await this.patientRepository.findAndCount({

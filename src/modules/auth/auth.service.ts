@@ -12,9 +12,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DoctorQueryDto } from './dto/doctor-query.dto';
+import { DoctorResponseDto } from './dto/doctor-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
@@ -69,7 +71,7 @@ export class AuthService {
    * @returns Created user information
    */
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const { username, password, email, phone, role } = createUserDto;
+    const { username, password, email, phone, fullname, role } = createUserDto;
 
     // Check if username already exists
     const existingUsername = await this.userRepository.findOne({
@@ -105,6 +107,7 @@ export class AuthService {
         password: hashedPassword,
         email,
         phone,
+        fullname,
         role: role || UserRole.RECEPTIONIST, // Default role if not provided
       });
 
@@ -116,6 +119,7 @@ export class AuthService {
         username: savedUser.username,
         email: savedUser.email,
         phone: savedUser.phone,
+        fullname: savedUser.fullname,
         role: savedUser.role,
         createdAt: savedUser.createdAt,
         updatedAt: savedUser.updatedAt,
@@ -142,10 +146,47 @@ export class AuthService {
       username: user.username,
       email: user.email,
       phone: user.phone,
+      fullname: user.fullname,
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
+  }
+
+  /**
+   * Get list of doctors (users with DOCTOR or ADMIN role)
+   * @param query Search query parameters
+   * @returns List of doctors
+   */
+  async getDoctors(query: DoctorQueryDto): Promise<DoctorResponseDto[]> {
+    // Bước 1: Tạo query builder
+    const queryBuilder = this.userRepository.createQueryBuilder('user')
+      .where('user.role IN (:...roles)', { roles: [UserRole.DOCTOR, UserRole.ADMIN] });
+
+    // Bước 2: Thêm điều kiện tìm kiếm nếu có
+    if (query.search) {
+      queryBuilder.andWhere('(user.username LIKE :search OR user.fullname LIKE :search)', {
+        search: `%${query.search}%`,
+      });
+    }
+
+    // Bước 3: Sắp xếp kết quả
+    queryBuilder.orderBy('user.fullname', 'ASC')
+      .addOrderBy('user.username', 'ASC');
+
+    // Bước 4: Thực hiện truy vấn
+    const doctors = await queryBuilder.getMany();
+
+    // Bước 5: Map kết quả sang DTO
+    return doctors.map(doctor => ({
+      id: doctor.id,
+      username: doctor.username,
+      email: doctor.email,
+      phone: doctor.phone,
+      fullname: doctor.fullname,
+      role: doctor.role,
+      createdAt: doctor.createdAt,
+    }));
   }
 
   /**

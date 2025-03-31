@@ -1,11 +1,13 @@
 import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import { Auth } from '@common/decorators/auth.decorator';
 import { IAccessTokenAuth } from '@common/guards/auth.guard';
-import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DoctorQueryDto } from './dto/doctor-query.dto';
+import { DoctorResponseDto } from './dto/doctor-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
@@ -48,5 +50,18 @@ export class AuthController {
   async getMe(@Auth() auth: IAccessTokenAuth): Promise<UserResponseDto> {
     console.log('auth', auth);
     return this.authService.getUserById(auth.id);
+  }
+
+  @Get('doctors')
+  @ApiBearerAuth()
+  @AuthGuardDecorator()
+  @ApiOperation({ summary: 'Lấy danh sách bác sĩ (users có role DOCTOR hoặc ADMIN)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Danh sách bác sĩ được lấy thành công',
+    type: [DoctorResponseDto],
+  })
+  async getDoctors(@Query() query: DoctorQueryDto): Promise<DoctorResponseDto[]> {
+    return this.authService.getDoctors(query);
   }
 }

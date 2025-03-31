@@ -38,4 +38,12 @@ export class PatientQueryDto {
   @IsOptional()
   @IsString()
   phone?: string;
+
+  @ApiPropertyOptional({
+    description: 'Tìm kiếm theo mã bệnh nhân',
+    example: 'BN000001',
+  })
+  @IsOptional()
+  @IsString()
+  code?: string;
 }

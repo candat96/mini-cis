@@ -27,6 +27,13 @@ export class UserResponseDto {
   phone: string;
 
   @ApiProperty({
+    description: 'Họ và tên đầy đủ',
+    example: 'Nguyễn Văn A',
+    required: false,
+  })
+  fullname?: string;
+
+  @ApiProperty({
     description: 'User role',
     enum: UserRole,
     example: UserRole.RECEPTIONIST,

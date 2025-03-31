@@ -9,6 +9,13 @@ export class PatientResponseDto {
   id: string;
 
   @Expose()
+  @ApiProperty({
+    description: 'Mã bệnh nhân',
+    example: 'BN000001'
+  })
+  code: string;
+
+  @Expose()
   @ApiProperty()
   name: string;
 
@@ -27,6 +34,14 @@ export class PatientResponseDto {
   @Expose()
   @ApiPropertyOptional()
   occupation?: string;
+
+  @Expose()
+  @ApiPropertyOptional({ 
+    description: 'Ngày sinh', 
+    example: '1990-01-01',
+    type: Date
+  })
+  birthDate?: Date;
 
   @Expose()
   @ApiProperty()

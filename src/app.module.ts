@@ -2,6 +2,7 @@ import { WinstonLoggerService } from '@common/services/winston.service';
 import { Config } from '@config/config';
 import { ApiLoggerMiddleware } from '@middlewares/logger.middleware';
 import { AuthModule } from '@modules/auth/auth.module';
+import { AppointmentModule } from '@modules/appointment/appointment.module';
 import { DatabaseModule } from '@modules/database/database.module';
 import { InventoryModule } from '@modules/inventory/inventory.module';
 import { MedicineModule } from '@modules/medicine/medicine.module';
@@ -31,6 +32,7 @@ import { AppController } from './app.controller';
     StockInModule,
     StockOutModule,
     InventoryModule,
+    AppointmentModule,
   ],
   controllers: [AppController],
   providers: [WinstonLoggerService],
