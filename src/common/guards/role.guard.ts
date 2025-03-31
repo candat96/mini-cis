@@ -12,7 +12,7 @@ export class RoleGuard implements CanActivate {
     if (!roles) return true;
     const request = context.switchToHttp().getRequest();
     const auth: IAccessTokenAuth = request.auth;
-
+    console.log(auth);
     return auth ? roles.includes(auth.role) : false;
   }
 }

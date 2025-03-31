@@ -1,7 +1,4 @@
-import { Lang } from '@common/classes/response.dto';
 import { AppConstants } from '@common/constants/app.constant';
-import { ErrorCode } from '@common/constants/error.constant';
-import { getErrorMessage } from '@common/utils/utils';
 import { Config } from '@config/config';
 import {
   CanActivate,
@@ -12,7 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 
 export interface IAccessTokenAuth {
-  _id: string;
+  id: string;
   name: string;
   avatar: string;
   role: any; // Todo: Replace any with role enum if it exists
@@ -25,7 +22,7 @@ export interface IAccessTokenPayload {
 }
 
 export interface IRefreshTokenAuth {
-  _id: string;
+  id: string;
 }
 
 export interface IRefreshTokenPayload {
@@ -41,11 +38,9 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    const headersLang = request.headers?.[AppConstants.LANG_HEADERS_KEY];
-    const lang = Lang[headersLang] || Lang.EN;
 
     if (!token) {
-      throw new UnauthorizedException(getErrorMessage(ErrorCode.UNAUTHORIZED, lang));
+      throw new UnauthorizedException('Unauthorized');
     }
 
     try {
@@ -56,19 +51,14 @@ export class AuthGuard implements CanActivate {
         },
       );
 
-      if (!user?._id || !user?.role) {
-        throw new UnauthorizedException(
-          getErrorMessage(ErrorCode.INVALID_ACCESS_TOKEN, lang),
-        );
+      if (!user?.id || !user?.role) {
+        throw new UnauthorizedException('Invalid access token');
       }
 
       request['auth'] = user;
-
       return true;
     } catch {
-      throw new UnauthorizedException(
-        getErrorMessage(ErrorCode.INVALID_ACCESS_TOKEN, lang),
-      );
+      throw new UnauthorizedException('Invalid access token');
     }
   }
 
