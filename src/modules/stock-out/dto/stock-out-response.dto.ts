@@ -1,6 +1,6 @@
+import { MedicineResponseDto } from '@modules/medicine/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { MedicineResponseDto } from '@modules/medicine/dto';
 
 @Exclude()
 export class StockOutDetailResponseDto {
@@ -72,4 +72,4 @@ export class StockOutResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

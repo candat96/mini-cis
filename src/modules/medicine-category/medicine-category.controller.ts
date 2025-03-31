@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -11,8 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
-import { MedicineCategoryService } from './medicine-category.service';
 import {
   CreateMedicineCategoryDto,
   MedicineCategoryQueryDto,
@@ -20,6 +19,7 @@ import {
   PaginatedMedicineCategoriesResponseDto,
   UpdateMedicineCategoryDto,
 } from './dto';
+import { MedicineCategoryService } from './medicine-category.service';
 
 @ApiTags('Medicine Categories')
 @Controller('medicine-categories')
@@ -42,11 +42,15 @@ export class MedicineCategoryController {
   async createMedicineCategory(
     @Body() createMedicineCategoryDto: CreateMedicineCategoryDto,
   ): Promise<MedicineCategoryResponseDto> {
-    return this.medicineCategoryService.createMedicineCategory(createMedicineCategoryDto);
+    return this.medicineCategoryService.createMedicineCategory(
+      createMedicineCategoryDto,
+    );
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách phân loại thuốc có phân trang và tìm kiếm' })
+  @ApiOperation({
+    summary: 'Lấy danh sách phân loại thuốc có phân trang và tìm kiếm',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Lấy danh sách phân loại thuốc thành công',
@@ -69,7 +73,9 @@ export class MedicineCategoryController {
     status: HttpStatus.NOT_FOUND,
     description: 'Không tìm thấy phân loại thuốc',
   })
-  async getMedicineCategoryById(@Param('id') id: string): Promise<MedicineCategoryResponseDto> {
+  async getMedicineCategoryById(
+    @Param('id') id: string,
+  ): Promise<MedicineCategoryResponseDto> {
     return this.medicineCategoryService.getMedicineCategoryById(id);
   }
 
@@ -92,7 +98,10 @@ export class MedicineCategoryController {
     @Param('id') id: string,
     @Body() updateMedicineCategoryDto: UpdateMedicineCategoryDto,
   ): Promise<MedicineCategoryResponseDto> {
-    return this.medicineCategoryService.updateMedicineCategory(id, updateMedicineCategoryDto);
+    return this.medicineCategoryService.updateMedicineCategory(
+      id,
+      updateMedicineCategoryDto,
+    );
   }
 
   @Delete(':id')
@@ -109,4 +118,4 @@ export class MedicineCategoryController {
   async deleteMedicineCategory(@Param('id') id: string): Promise<void> {
     return this.medicineCategoryService.deleteMedicineCategory(id);
   }
-} 
+}

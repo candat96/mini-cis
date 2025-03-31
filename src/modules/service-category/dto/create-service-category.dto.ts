@@ -7,7 +7,10 @@ export class CreateServiceCategoryDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({ description: 'Mã loại dịch vụ (tự động tạo nếu không nhập, định dạng LDV001, LDV002...)' })
+  @ApiPropertyOptional({
+    description:
+      'Mã loại dịch vụ (tự động tạo nếu không nhập, định dạng LDV001, LDV002...)',
+  })
   @IsOptional()
   @IsString()
   code?: string;
@@ -16,4 +19,4 @@ export class CreateServiceCategoryDto {
   @IsOptional()
   @IsString()
   note?: string;
-} 
+}

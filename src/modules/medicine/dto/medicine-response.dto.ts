@@ -1,6 +1,6 @@
+import { MedicineCategoryResponseDto } from '@modules/medicine-category/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { MedicineCategoryResponseDto } from '@modules/medicine-category/dto';
 
 @Exclude()
 export class MedicineResponseDto {
@@ -48,4 +48,4 @@ export class MedicineResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

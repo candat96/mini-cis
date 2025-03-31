@@ -1,12 +1,12 @@
-import { Auth } from '@common/decorators/auth.decorator';
 import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
+import { Auth } from '@common/decorators/auth.decorator';
 import { IAccessTokenAuth } from '@common/guards/auth.guard';
 import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { AuthResponseDto } from './dto/auth-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
 @ApiTags('Auth')
@@ -36,7 +36,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Get('me')  
+  @Get('me')
   @ApiBearerAuth()
   @AuthGuardDecorator()
   @ApiOperation({ summary: 'Get current user information' })

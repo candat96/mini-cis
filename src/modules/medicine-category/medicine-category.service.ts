@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { MedicineCategory } from '../database/entities/medicine-category.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateMedicineCategoryDto,
   MedicineCategoryQueryDto,
@@ -10,6 +9,7 @@ import {
   PaginatedMedicineCategoriesResponseDto,
   UpdateMedicineCategoryDto,
 } from './dto';
+import { MedicineCategory } from '../database/entities/medicine-category.entity';
 
 @Injectable()
 export class MedicineCategoryService {
@@ -31,12 +31,17 @@ export class MedicineCategoryService {
       });
 
       if (existingCategory) {
-        throw new ConflictException(`Mã phân loại thuốc ${createMedicineCategoryDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã phân loại thuốc ${createMedicineCategoryDto.code} đã tồn tại`,
+        );
       }
     }
 
-    const medicineCategory = this.medicineCategoryRepository.create(createMedicineCategoryDto);
-    const savedCategory = await this.medicineCategoryRepository.save(medicineCategory);
+    const medicineCategory = this.medicineCategoryRepository.create(
+      createMedicineCategoryDto,
+    );
+    const savedCategory =
+      await this.medicineCategoryRepository.save(medicineCategory);
     return plainToInstance(MedicineCategoryResponseDto, savedCategory);
   }
 
@@ -101,7 +106,9 @@ export class MedicineCategoryService {
   }
 
   async getMedicineCategoryById(id: string): Promise<MedicineCategoryResponseDto> {
-    const category = await this.medicineCategoryRepository.findOne({ where: { id } });
+    const category = await this.medicineCategoryRepository.findOne({
+      where: { id },
+    });
     if (!category) {
       throw new NotFoundException(`Không tìm thấy phân loại thuốc với ID: ${id}`);
     }
@@ -112,7 +119,9 @@ export class MedicineCategoryService {
     id: string,
     updateMedicineCategoryDto: UpdateMedicineCategoryDto,
   ): Promise<MedicineCategoryResponseDto> {
-    const category = await this.medicineCategoryRepository.findOne({ where: { id } });
+    const category = await this.medicineCategoryRepository.findOne({
+      where: { id },
+    });
     if (!category) {
       throw new NotFoundException(`Không tìm thấy phân loại thuốc với ID: ${id}`);
     }
@@ -144,4 +153,4 @@ export class MedicineCategoryService {
       throw new NotFoundException(`Không tìm thấy phân loại thuốc với ID: ${id}`);
     }
   }
-} 
+}

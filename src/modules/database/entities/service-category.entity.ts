@@ -15,4 +15,4 @@ export class ServiceCategory extends BaseEntity {
 
   @OneToMany(() => Service, (service) => service.category)
   services: Service[];
-} 
+}

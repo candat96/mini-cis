@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -11,8 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
-import { MedicineService } from './medicine.service';
 import {
   CreateMedicineDto,
   MedicineQueryDto,
@@ -20,6 +19,7 @@ import {
   PaginatedMedicinesResponseDto,
   UpdateMedicineDto,
 } from './dto';
+import { MedicineService } from './medicine.service';
 
 @ApiTags('Medicines')
 @Controller('medicines')
@@ -43,7 +43,9 @@ export class MedicineController {
     status: HttpStatus.NOT_FOUND,
     description: 'Không tìm thấy phân loại thuốc',
   })
-  async createMedicine(@Body() createMedicineDto: CreateMedicineDto): Promise<MedicineResponseDto> {
+  async createMedicine(
+    @Body() createMedicineDto: CreateMedicineDto,
+  ): Promise<MedicineResponseDto> {
     return this.medicineService.createMedicine(createMedicineDto);
   }
 
@@ -54,7 +56,9 @@ export class MedicineController {
     description: 'Lấy danh sách thuốc thành công',
     type: PaginatedMedicinesResponseDto,
   })
-  async getAllMedicines(@Query() query: MedicineQueryDto): Promise<PaginatedMedicinesResponseDto> {
+  async getAllMedicines(
+    @Query() query: MedicineQueryDto,
+  ): Promise<PaginatedMedicinesResponseDto> {
     return this.medicineService.getAllMedicines(query);
   }
 
@@ -109,4 +113,4 @@ export class MedicineController {
   async deleteMedicine(@Param('id') id: string): Promise<void> {
     return this.medicineService.deleteMedicine(id);
   }
-} 
+}

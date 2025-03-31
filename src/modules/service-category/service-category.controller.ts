@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -11,8 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
-import { ServiceCategoryService } from './service-category.service';
 import {
   CreateServiceCategoryDto,
   PaginatedServiceCategoriesResponseDto,
@@ -20,6 +19,7 @@ import {
   ServiceCategoryResponseDto,
   UpdateServiceCategoryDto,
 } from './dto';
+import { ServiceCategoryService } from './service-category.service';
 
 @ApiTags('Service Categories')
 @Controller('service-categories')
@@ -42,7 +42,9 @@ export class ServiceCategoryController {
   async createServiceCategory(
     @Body() createServiceCategoryDto: CreateServiceCategoryDto,
   ): Promise<ServiceCategoryResponseDto> {
-    return this.serviceCategoryService.createServiceCategory(createServiceCategoryDto);
+    return this.serviceCategoryService.createServiceCategory(
+      createServiceCategoryDto,
+    );
   }
 
   @Get()
@@ -69,7 +71,9 @@ export class ServiceCategoryController {
     status: HttpStatus.NOT_FOUND,
     description: 'Không tìm thấy loại dịch vụ',
   })
-  async getServiceCategoryById(@Param('id') id: string): Promise<ServiceCategoryResponseDto> {
+  async getServiceCategoryById(
+    @Param('id') id: string,
+  ): Promise<ServiceCategoryResponseDto> {
     return this.serviceCategoryService.getServiceCategoryById(id);
   }
 
@@ -92,7 +96,10 @@ export class ServiceCategoryController {
     @Param('id') id: string,
     @Body() updateServiceCategoryDto: UpdateServiceCategoryDto,
   ): Promise<ServiceCategoryResponseDto> {
-    return this.serviceCategoryService.updateServiceCategory(id, updateServiceCategoryDto);
+    return this.serviceCategoryService.updateServiceCategory(
+      id,
+      updateServiceCategoryDto,
+    );
   }
 
   @Delete(':id')
@@ -109,4 +116,4 @@ export class ServiceCategoryController {
   async deleteServiceCategory(@Param('id') id: string): Promise<void> {
     return this.serviceCategoryService.deleteServiceCategory(id);
   }
-} 
+}

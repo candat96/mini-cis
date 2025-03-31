@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -11,8 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
-import { ServiceService } from './service.service';
 import {
   CreateServiceDto,
   PaginatedServicesResponseDto,
@@ -20,6 +19,7 @@ import {
   ServiceResponseDto,
   UpdateServiceDto,
 } from './dto';
+import { ServiceService } from './service.service';
 
 @ApiTags('Services')
 @Controller('services')
@@ -43,7 +43,9 @@ export class ServiceController {
     status: HttpStatus.NOT_FOUND,
     description: 'Không tìm thấy loại dịch vụ',
   })
-  async createService(@Body() createServiceDto: CreateServiceDto): Promise<ServiceResponseDto> {
+  async createService(
+    @Body() createServiceDto: CreateServiceDto,
+  ): Promise<ServiceResponseDto> {
     return this.serviceService.createService(createServiceDto);
   }
 
@@ -111,4 +113,4 @@ export class ServiceController {
   async deleteService(@Param('id') id: string): Promise<void> {
     return this.serviceService.deleteService(id);
   }
-} 
+}

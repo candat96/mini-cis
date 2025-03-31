@@ -1,6 +1,6 @@
+import { Gender } from '@modules/database/enums/gender.enum';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { Gender } from '@modules/database/enums/gender.enum';
 
 @Exclude()
 export class PatientResponseDto {
@@ -35,4 +35,4 @@ export class PatientResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

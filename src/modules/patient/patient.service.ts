@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { Patient } from '../database/entities/patient.entity';
-import { 
-  CreatePatientDto, 
-  PaginatedPatientsResponseDto, 
-  PatientQueryDto, 
-  PatientResponseDto, 
-  UpdatePatientDto 
+import { ILike, Repository } from 'typeorm';
+import {
+  CreatePatientDto,
+  PaginatedPatientsResponseDto,
+  PatientQueryDto,
+  PatientResponseDto,
+  UpdatePatientDto,
 } from './dto';
+import { Patient } from '../database/entities/patient.entity';
 
 @Injectable()
 export class PatientService {
@@ -18,15 +18,19 @@ export class PatientService {
     private readonly patientRepository: Repository<Patient>,
   ) {}
 
-  async createPatient(createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
+  async createPatient(
+    createPatientDto: CreatePatientDto,
+  ): Promise<PatientResponseDto> {
     const patient = this.patientRepository.create(createPatientDto);
     const savedPatient = await this.patientRepository.save(patient);
     return plainToInstance(PatientResponseDto, savedPatient);
   }
 
-  async getAllPatients(query: PatientQueryDto): Promise<PaginatedPatientsResponseDto> {
+  async getAllPatients(
+    query: PatientQueryDto,
+  ): Promise<PaginatedPatientsResponseDto> {
     const { page = 1, limit = 10, name, phone } = query;
-    
+
     const whereConditions = {};
 
     if (name) {
@@ -63,7 +67,10 @@ export class PatientService {
     return plainToInstance(PatientResponseDto, patient);
   }
 
-  async updatePatient(id: string, updatePatientDto: UpdatePatientDto): Promise<PatientResponseDto> {
+  async updatePatient(
+    id: string,
+    updatePatientDto: UpdatePatientDto,
+  ): Promise<PatientResponseDto> {
     const patient = await this.patientRepository.findOne({ where: { id } });
     if (!patient) {
       throw new NotFoundException(`Không tìm thấy bệnh nhân với ID: ${id}`);
@@ -80,4 +87,4 @@ export class PatientService {
       throw new NotFoundException(`Không tìm thấy bệnh nhân với ID: ${id}`);
     }
   }
-} 
+}

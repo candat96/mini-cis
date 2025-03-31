@@ -45,4 +45,4 @@ export class ServiceQueryDto {
   @IsOptional()
   @IsUUID()
   categoryId?: string;
-} 
+}

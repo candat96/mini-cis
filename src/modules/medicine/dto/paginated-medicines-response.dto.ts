@@ -27,4 +27,4 @@ export class PaginatedMedicinesResponseDto {
     description: 'Tổng số trang',
   })
   pageCount: number;
-} 
+}

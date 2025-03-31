@@ -56,4 +56,4 @@ export class StockOutQueryDto {
   @IsDate()
   @Type(() => Date)
   toDate?: Date;
-} 
+}

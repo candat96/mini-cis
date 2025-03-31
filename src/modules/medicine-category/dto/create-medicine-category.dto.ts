@@ -7,7 +7,9 @@ export class CreateMedicineCategoryDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({ description: 'Mã phân loại thuốc (tự động tạo nếu không nhập)' })
+  @ApiPropertyOptional({
+    description: 'Mã phân loại thuốc (tự động tạo nếu không nhập)',
+  })
   @IsOptional()
   @IsString()
   code?: string;
@@ -16,4 +18,4 @@ export class CreateMedicineCategoryDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

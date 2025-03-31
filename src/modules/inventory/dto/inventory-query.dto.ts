@@ -55,4 +55,4 @@ export class InventoryQueryDto {
   @IsInt()
   @Min(1)
   expiryDays?: number;
-} 
+}

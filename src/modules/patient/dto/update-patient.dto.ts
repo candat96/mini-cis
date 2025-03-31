@@ -1,6 +1,6 @@
+import { Gender } from '@modules/database/enums/gender.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { Gender } from '@modules/database/enums/gender.enum';
 
 export class UpdatePatientDto {
   @ApiPropertyOptional({ description: 'Tên bệnh nhân' })
@@ -13,10 +13,10 @@ export class UpdatePatientDto {
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: 'Giới tính',
     enum: Gender,
-    enumName: 'Gender'
+    enumName: 'Gender',
   })
   @IsOptional()
   @IsEnum(Gender)
@@ -31,4 +31,4 @@ export class UpdatePatientDto {
   @IsOptional()
   @IsString()
   occupation?: string;
-} 
+}

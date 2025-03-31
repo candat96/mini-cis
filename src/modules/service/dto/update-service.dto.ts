@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class UpdateServiceDto {
   @ApiPropertyOptional({ description: 'Tên dịch vụ' })
@@ -29,4 +29,4 @@ export class UpdateServiceDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

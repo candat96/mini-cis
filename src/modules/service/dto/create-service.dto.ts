@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 export class CreateServiceDto {
   @ApiProperty({ description: 'Tên dịch vụ' })
@@ -8,7 +15,10 @@ export class CreateServiceDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({ description: 'Mã dịch vụ (tự động tạo nếu không nhập, định dạng DV0001, DV0002...)' })
+  @ApiPropertyOptional({
+    description:
+      'Mã dịch vụ (tự động tạo nếu không nhập, định dạng DV0001, DV0002...)',
+  })
   @IsOptional()
   @IsString()
   code?: string;
@@ -29,4 +39,4 @@ export class CreateServiceDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

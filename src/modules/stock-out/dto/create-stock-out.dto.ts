@@ -1,15 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { 
-  IsArray, 
-  IsDate, 
-  IsNotEmpty, 
-  IsNumber, 
-  IsOptional, 
-  IsString, 
-  IsUUID, 
-  Min, 
-  ValidateNested 
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 
 export class StockOutDetailDto {

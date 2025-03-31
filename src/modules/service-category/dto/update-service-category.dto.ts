@@ -16,4 +16,4 @@ export class UpdateServiceCategoryDto {
   @IsOptional()
   @IsString()
   note?: string;
-} 
+}

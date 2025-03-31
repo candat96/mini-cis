@@ -26,4 +26,4 @@ export class ServiceCategoryResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

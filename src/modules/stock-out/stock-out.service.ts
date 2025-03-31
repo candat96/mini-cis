@@ -1,17 +1,22 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { StockOut } from '../database/entities/stock-out.entity';
-import { StockOutDetail } from '../database/entities/stock-out-detail.entity';
-import { Medicine } from '../database/entities/medicine.entity';
-import { Inventory } from '../database/entities/inventory.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateStockOutDto,
   PaginatedStockOutsResponseDto,
   StockOutQueryDto,
   StockOutResponseDto,
 } from './dto';
+import { Inventory } from '../database/entities/inventory.entity';
+import { Medicine } from '../database/entities/medicine.entity';
+import { StockOutDetail } from '../database/entities/stock-out-detail.entity';
+import { StockOut } from '../database/entities/stock-out.entity';
 
 @Injectable()
 export class StockOutService {
@@ -26,7 +31,9 @@ export class StockOutService {
     private readonly inventoryRepository: Repository<Inventory>,
   ) {}
 
-  async createStockOut(createStockOutDto: CreateStockOutDto): Promise<StockOutResponseDto> {
+  async createStockOut(
+    createStockOutDto: CreateStockOutDto,
+  ): Promise<StockOutResponseDto> {
     // Nếu không có mã, tự động tạo mã
     if (!createStockOutDto.code) {
       createStockOutDto.code = await this.generateStockOutCode();
@@ -37,7 +44,9 @@ export class StockOutService {
       });
 
       if (existingStockOut) {
-        throw new ConflictException(`Mã phiếu xuất ${createStockOutDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã phiếu xuất ${createStockOutDto.code} đã tồn tại`,
+        );
       }
     }
 
@@ -53,11 +62,17 @@ export class StockOutService {
       });
 
       if (!medicine) {
-        throw new NotFoundException(`Không tìm thấy thuốc với ID: ${detail.medicineId}`);
+        throw new NotFoundException(
+          `Không tìm thấy thuốc với ID: ${detail.medicineId}`,
+        );
       }
 
       // Kiểm tra tồn kho
-      await this.checkInventory(detail.medicineId, detail.quantity, detail.batchNumber);
+      await this.checkInventory(
+        detail.medicineId,
+        detail.quantity,
+        detail.batchNumber,
+      );
 
       // Tính thành tiền cho từng dòng
       const amount = detail.quantity * detail.unitPrice;
@@ -90,10 +105,13 @@ export class StockOutService {
     return this.getStockOutById(savedStockOut.id);
   }
 
-  async getAllStockOuts(query: StockOutQueryDto): Promise<PaginatedStockOutsResponseDto> {
+  async getAllStockOuts(
+    query: StockOutQueryDto,
+  ): Promise<PaginatedStockOutsResponseDto> {
     const { page = 1, limit = 10, code, recipient, fromDate, toDate } = query;
 
-    const queryBuilder = this.stockOutRepository.createQueryBuilder('stockOut')
+    const queryBuilder = this.stockOutRepository
+      .createQueryBuilder('stockOut')
       .leftJoinAndSelect('stockOut.details', 'details')
       .leftJoinAndSelect('details.medicine', 'medicine')
       .orderBy('stockOut.createdAt', 'DESC')
@@ -105,15 +123,21 @@ export class StockOutService {
     }
 
     if (recipient) {
-      queryBuilder.andWhere('stockOut.recipient LIKE :recipient', { recipient: `%${recipient}%` });
+      queryBuilder.andWhere('stockOut.recipient LIKE :recipient', {
+        recipient: `%${recipient}%`,
+      });
     }
 
     if (fromDate) {
-      queryBuilder.andWhere('DATE(stockOut.stockOutDate) >= DATE(:fromDate)', { fromDate });
+      queryBuilder.andWhere('DATE(stockOut.stockOutDate) >= DATE(:fromDate)', {
+        fromDate,
+      });
     }
 
     if (toDate) {
-      queryBuilder.andWhere('DATE(stockOut.stockOutDate) <= DATE(:toDate)', { toDate });
+      queryBuilder.andWhere('DATE(stockOut.stockOutDate) <= DATE(:toDate)', {
+        toDate,
+      });
     }
 
     const [stockOuts, total] = await queryBuilder.getManyAndCount();
@@ -146,7 +170,7 @@ export class StockOutService {
 
     // Xóa phiếu xuất kho
     await this.stockOutRepository.remove(stockOut as StockOut);
-    
+
     // TODO: Cân nhắc việc điều chỉnh lại tồn kho sau khi xóa phiếu xuất
   }
 
@@ -183,19 +207,27 @@ export class StockOutService {
   /**
    * Kiểm tra tồn kho trước khi xuất hàng
    */
-  private async checkInventory(medicineId: string, quantity: number, batchNumber: string = ''): Promise<void> {
+  private async checkInventory(
+    medicineId: string,
+    quantity: number,
+    batchNumber: string = '',
+  ): Promise<void> {
     let query = this.inventoryRepository
       .createQueryBuilder('inventory')
       .where('inventory.medicineId = :medicineId', { medicineId });
 
     if (batchNumber) {
-      query = query.andWhere('inventory.batchNumber = :batchNumber', { batchNumber });
+      query = query.andWhere('inventory.batchNumber = :batchNumber', {
+        batchNumber,
+      });
     }
 
     const inventories = await query.getMany();
 
     if (inventories.length === 0) {
-      throw new BadRequestException(`Không tìm thấy thuốc trong kho với ID: ${medicineId}`);
+      throw new BadRequestException(
+        `Không tìm thấy thuốc trong kho với ID: ${medicineId}`,
+      );
     }
 
     // Nếu chỉ định số lô, kiểm tra số lượng trong lô đó
@@ -203,15 +235,18 @@ export class StockOutService {
       const inventory = inventories[0];
       if (inventory.quantity < quantity) {
         throw new BadRequestException(
-          `Số lượng xuất (${quantity}) vượt quá số lượng tồn kho (${inventory.quantity}) cho thuốc với ID: ${medicineId} và số lô: ${batchNumber}`
+          `Số lượng xuất (${quantity}) vượt quá số lượng tồn kho (${inventory.quantity}) cho thuốc với ID: ${medicineId} và số lô: ${batchNumber}`,
         );
       }
     } else {
       // Nếu không chỉ định số lô, kiểm tra tổng số lượng
-      const totalQuantity = inventories.reduce((sum, item) => sum + item.quantity, 0);
+      const totalQuantity = inventories.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      );
       if (totalQuantity < quantity) {
         throw new BadRequestException(
-          `Số lượng xuất (${quantity}) vượt quá tổng số lượng tồn kho (${totalQuantity}) cho thuốc với ID: ${medicineId}`
+          `Số lượng xuất (${quantity}) vượt quá tổng số lượng tồn kho (${totalQuantity}) cho thuốc với ID: ${medicineId}`,
         );
       }
     }
@@ -223,7 +258,7 @@ export class StockOutService {
   private async updateInventory(stockOut: StockOut): Promise<void> {
     for (const detail of stockOut.details) {
       let remainingQuantity = detail.quantity;
-      
+
       // Nếu có chỉ định số lô, cập nhật số lượng từ lô đó
       if (detail.batchNumber) {
         const inventory = await this.inventoryRepository.findOne({
@@ -267,9 +302,9 @@ export class StockOutService {
 
       if (remainingQuantity > 0) {
         throw new BadRequestException(
-          `Không đủ số lượng trong kho cho thuốc với ID: ${detail.medicineId}`
+          `Không đủ số lượng trong kho cho thuốc với ID: ${detail.medicineId}`,
         );
       }
     }
   }
-} 
+}

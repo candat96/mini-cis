@@ -1,6 +1,6 @@
+import { ServiceCategoryResponseDto } from '@modules/service-category/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { ServiceCategoryResponseDto } from '@modules/service-category/dto';
 
 @Exclude()
 export class ServiceResponseDto {
@@ -36,4 +36,4 @@ export class ServiceResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

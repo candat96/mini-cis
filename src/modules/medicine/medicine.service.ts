@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { Medicine } from '../database/entities/medicine.entity';
-import { MedicineCategory } from '../database/entities/medicine-category.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateMedicineDto,
   MedicineQueryDto,
@@ -11,6 +9,8 @@ import {
   PaginatedMedicinesResponseDto,
   UpdateMedicineDto,
 } from './dto';
+import { MedicineCategory } from '../database/entities/medicine-category.entity';
+import { Medicine } from '../database/entities/medicine.entity';
 
 @Injectable()
 export class MedicineService {
@@ -21,7 +21,9 @@ export class MedicineService {
     private readonly medicineCategoryRepository: Repository<MedicineCategory>,
   ) {}
 
-  async createMedicine(createMedicineDto: CreateMedicineDto): Promise<MedicineResponseDto> {
+  async createMedicine(
+    createMedicineDto: CreateMedicineDto,
+  ): Promise<MedicineResponseDto> {
     // Nếu không có mã, tự động tạo mã
     if (!createMedicineDto.code) {
       createMedicineDto.code = await this.generateMedicineCode();
@@ -42,7 +44,9 @@ export class MedicineService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Không tìm thấy phân loại thuốc với ID: ${createMedicineDto.categoryId}`);
+      throw new NotFoundException(
+        `Không tìm thấy phân loại thuốc với ID: ${createMedicineDto.categoryId}`,
+      );
     }
 
     const medicine = this.medicineRepository.create({
@@ -90,10 +94,13 @@ export class MedicineService {
     return newCode;
   }
 
-  async getAllMedicines(query: MedicineQueryDto): Promise<PaginatedMedicinesResponseDto> {
+  async getAllMedicines(
+    query: MedicineQueryDto,
+  ): Promise<PaginatedMedicinesResponseDto> {
     const { page = 1, limit = 10, name, code, categoryId, manufacturer } = query;
 
-    const queryBuilder = this.medicineRepository.createQueryBuilder('medicine')
+    const queryBuilder = this.medicineRepository
+      .createQueryBuilder('medicine')
       .leftJoinAndSelect('medicine.category', 'category')
       .orderBy('medicine.createdAt', 'DESC')
       .skip((page - 1) * limit)
@@ -112,7 +119,9 @@ export class MedicineService {
     }
 
     if (manufacturer) {
-      queryBuilder.andWhere('medicine.manufacturer LIKE :manufacturer', { manufacturer: `%${manufacturer}%` });
+      queryBuilder.andWhere('medicine.manufacturer LIKE :manufacturer', {
+        manufacturer: `%${manufacturer}%`,
+      });
     }
 
     const [medicines, total] = await queryBuilder.getManyAndCount();
@@ -140,7 +149,10 @@ export class MedicineService {
     return plainToInstance(MedicineResponseDto, medicine);
   }
 
-  async updateMedicine(id: string, updateMedicineDto: UpdateMedicineDto): Promise<MedicineResponseDto> {
+  async updateMedicine(
+    id: string,
+    updateMedicineDto: UpdateMedicineDto,
+  ): Promise<MedicineResponseDto> {
     const medicine = await this.medicineRepository.findOne({
       where: { id },
       relations: ['category'],
@@ -168,7 +180,9 @@ export class MedicineService {
       });
 
       if (!category) {
-        throw new NotFoundException(`Không tìm thấy phân loại thuốc với ID: ${updateMedicineDto.categoryId}`);
+        throw new NotFoundException(
+          `Không tìm thấy phân loại thuốc với ID: ${updateMedicineDto.categoryId}`,
+        );
       }
 
       medicine.category = category;
@@ -186,4 +200,4 @@ export class MedicineService {
       throw new NotFoundException(`Không tìm thấy thuốc với ID: ${id}`);
     }
   }
-} 
+}

@@ -1,16 +1,22 @@
+import { IAccessTokenAuth } from '@common/guards/auth.guard';
 import { Config } from '@config/config';
 import { User } from '@modules/database/entities/user.entity';
 import { UserRole } from '@modules/database/enums/user-role.enum';
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { AuthResponseDto } from './dto/auth-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import * as bcrypt from 'bcrypt';
-import { IAccessTokenAuth } from '@common/guards/auth.guard';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +52,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: Config.JWT_SECRET,
-      expiresIn:'120d',
+      expiresIn: '120d',
     });
 
     return {
@@ -126,7 +132,7 @@ export class AuthService {
    */
   async getUserById(id: string): Promise<UserResponseDto> {
     const user = await this.userRepository.findOne({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }

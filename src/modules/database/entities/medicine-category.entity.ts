@@ -15,4 +15,4 @@ export class MedicineCategory extends BaseEntity {
 
   @OneToMany(() => Medicine, (medicine) => medicine.category)
   medicines: Medicine[];
-} 
+}

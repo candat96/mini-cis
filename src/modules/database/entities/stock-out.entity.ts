@@ -21,4 +21,4 @@ export class StockOut extends BaseEntity {
 
   @OneToMany(() => StockOutDetail, (detail) => detail.stockOut, { cascade: true })
   details: StockOutDetail[];
-} 
+}

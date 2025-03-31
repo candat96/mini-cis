@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 export class CreateMedicineDto {
   @ApiProperty({ description: 'Tên thuốc' })
@@ -8,7 +15,9 @@ export class CreateMedicineDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({ description: 'Mã thuốc (tự động tạo nếu không nhập, định dạng T0001, T0002...)' })
+  @ApiPropertyOptional({
+    description: 'Mã thuốc (tự động tạo nếu không nhập, định dạng T0001, T0002...)',
+  })
   @IsOptional()
   @IsString()
   code?: string;
@@ -46,4 +55,4 @@ export class CreateMedicineDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

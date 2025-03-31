@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { StockIn } from '../database/entities/stock-in.entity';
-import { StockInDetail } from '../database/entities/stock-in-detail.entity';
-import { Medicine } from '../database/entities/medicine.entity';
-import { Inventory } from '../database/entities/inventory.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateStockInDto,
   PaginatedStockInsResponseDto,
   StockInQueryDto,
   StockInResponseDto,
 } from './dto';
+import { Inventory } from '../database/entities/inventory.entity';
+import { Medicine } from '../database/entities/medicine.entity';
+import { StockInDetail } from '../database/entities/stock-in-detail.entity';
+import { StockIn } from '../database/entities/stock-in.entity';
 
 @Injectable()
 export class StockInService {
@@ -26,7 +26,9 @@ export class StockInService {
     private readonly inventoryRepository: Repository<Inventory>,
   ) {}
 
-  async createStockIn(createStockInDto: CreateStockInDto): Promise<StockInResponseDto> {
+  async createStockIn(
+    createStockInDto: CreateStockInDto,
+  ): Promise<StockInResponseDto> {
     // Nếu không có mã, tự động tạo mã
     if (!createStockInDto.code) {
       createStockInDto.code = await this.generateStockInCode();
@@ -37,7 +39,9 @@ export class StockInService {
       });
 
       if (existingStockIn) {
-        throw new ConflictException(`Mã phiếu nhập ${createStockInDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã phiếu nhập ${createStockInDto.code} đã tồn tại`,
+        );
       }
     }
 
@@ -53,7 +57,9 @@ export class StockInService {
       });
 
       if (!medicine) {
-        throw new NotFoundException(`Không tìm thấy thuốc với ID: ${detail.medicineId}`);
+        throw new NotFoundException(
+          `Không tìm thấy thuốc với ID: ${detail.medicineId}`,
+        );
       }
 
       // Tính thành tiền cho từng dòng
@@ -88,10 +94,13 @@ export class StockInService {
     return this.getStockInById(savedStockIn.id);
   }
 
-  async getAllStockIns(query: StockInQueryDto): Promise<PaginatedStockInsResponseDto> {
+  async getAllStockIns(
+    query: StockInQueryDto,
+  ): Promise<PaginatedStockInsResponseDto> {
     const { page = 1, limit = 10, code, supplier, fromDate, toDate } = query;
 
-    const queryBuilder = this.stockInRepository.createQueryBuilder('stockIn')
+    const queryBuilder = this.stockInRepository
+      .createQueryBuilder('stockIn')
       .leftJoinAndSelect('stockIn.details', 'details')
       .leftJoinAndSelect('details.medicine', 'medicine')
       .orderBy('stockIn.createdAt', 'DESC')
@@ -103,15 +112,21 @@ export class StockInService {
     }
 
     if (supplier) {
-      queryBuilder.andWhere('stockIn.supplier LIKE :supplier', { supplier: `%${supplier}%` });
+      queryBuilder.andWhere('stockIn.supplier LIKE :supplier', {
+        supplier: `%${supplier}%`,
+      });
     }
 
     if (fromDate) {
-      queryBuilder.andWhere('DATE(stockIn.stockInDate) >= DATE(:fromDate)', { fromDate });
+      queryBuilder.andWhere('DATE(stockIn.stockInDate) >= DATE(:fromDate)', {
+        fromDate,
+      });
     }
 
     if (toDate) {
-      queryBuilder.andWhere('DATE(stockIn.stockInDate) <= DATE(:toDate)', { toDate });
+      queryBuilder.andWhere('DATE(stockIn.stockInDate) <= DATE(:toDate)', {
+        toDate,
+      });
     }
 
     const [stockIns, total] = await queryBuilder.getManyAndCount();
@@ -144,7 +159,7 @@ export class StockInService {
 
     // Xóa phiếu nhập kho
     await this.stockInRepository.remove(stockIn as StockIn);
-    
+
     // TODO: Cân nhắc việc điều chỉnh lại tồn kho sau khi xóa phiếu nhập
   }
 
@@ -193,16 +208,20 @@ export class StockInService {
 
       if (inventory) {
         // Nếu đã tồn tại, cập nhật số lượng và giá trung bình
-        const totalValue = inventory.quantity * inventory.averageCost + detail.amount;
+        const totalValue =
+          inventory.quantity * inventory.averageCost + detail.amount;
         const newQuantity = inventory.quantity + detail.quantity;
         const newAverageCost = totalValue / newQuantity;
 
         inventory.quantity = newQuantity;
         inventory.averageCost = newAverageCost;
-        
+
         if (detail.expiryDate) {
           // Cập nhật ngày hết hạn nếu mới hơn
-          if (!inventory.expiryDate || new Date(detail.expiryDate) > new Date(inventory.expiryDate)) {
+          if (
+            !inventory.expiryDate ||
+            new Date(detail.expiryDate) > new Date(inventory.expiryDate)
+          ) {
             inventory.expiryDate = detail.expiryDate;
           }
         }

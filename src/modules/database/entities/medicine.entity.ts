@@ -27,4 +27,4 @@ export class Medicine extends BaseEntity {
 
   @ManyToOne(() => MedicineCategory, (category) => category.medicines)
   category: MedicineCategory;
-} 
+}

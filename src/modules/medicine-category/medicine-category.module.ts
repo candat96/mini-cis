@@ -1,10 +1,10 @@
+import { Config } from '@config/config';
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MedicineCategory } from '../database/entities/medicine-category.entity';
 import { MedicineCategoryController } from './medicine-category.controller';
 import { MedicineCategoryService } from './medicine-category.service';
-import { JwtModule } from '@nestjs/jwt';
-import { Config } from '@config/config';
+import { MedicineCategory } from '../database/entities/medicine-category.entity';
 
 @Module({
   imports: [
@@ -18,4 +18,4 @@ import { Config } from '@config/config';
   providers: [MedicineCategoryService],
   exports: [MedicineCategoryService],
 })
-export class MedicineCategoryModule {} 
+export class MedicineCategoryModule {}

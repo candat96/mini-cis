@@ -38,4 +38,4 @@ export class MedicineCategoryQueryDto {
   @IsOptional()
   @IsString()
   code?: string;
-} 
+}

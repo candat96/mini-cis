@@ -38,4 +38,4 @@ export class PatientQueryDto {
   @IsOptional()
   @IsString()
   phone?: string;
-} 
+}

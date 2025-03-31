@@ -52,4 +52,4 @@ export class MedicineQueryDto {
   @IsOptional()
   @IsString()
   manufacturer?: string;
-} 
+}

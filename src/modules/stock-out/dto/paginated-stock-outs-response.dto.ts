@@ -27,4 +27,4 @@ export class PaginatedStockOutsResponseDto {
     description: 'Tổng số trang',
   })
   pageCount: number;
-} 
+}

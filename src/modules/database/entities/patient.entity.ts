@@ -22,4 +22,4 @@ export class Patient extends BaseEntity {
 
   @Column({ name: 'occupation', nullable: true })
   occupation: string;
-} 
+}

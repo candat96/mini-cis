@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { Service } from '../database/entities/service.entity';
-import { ServiceCategory } from '../database/entities/service-category.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateServiceDto,
   PaginatedServicesResponseDto,
@@ -11,6 +9,8 @@ import {
   ServiceResponseDto,
   UpdateServiceDto,
 } from './dto';
+import { ServiceCategory } from '../database/entities/service-category.entity';
+import { Service } from '../database/entities/service.entity';
 
 @Injectable()
 export class ServiceService {
@@ -21,7 +21,9 @@ export class ServiceService {
     private readonly serviceCategoryRepository: Repository<ServiceCategory>,
   ) {}
 
-  async createService(createServiceDto: CreateServiceDto): Promise<ServiceResponseDto> {
+  async createService(
+    createServiceDto: CreateServiceDto,
+  ): Promise<ServiceResponseDto> {
     // Nếu không có mã, tự động tạo mã
     if (!createServiceDto.code) {
       createServiceDto.code = await this.generateServiceCode();
@@ -32,7 +34,9 @@ export class ServiceService {
       });
 
       if (existingService) {
-        throw new ConflictException(`Mã dịch vụ ${createServiceDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã dịch vụ ${createServiceDto.code} đã tồn tại`,
+        );
       }
     }
 
@@ -42,7 +46,9 @@ export class ServiceService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Không tìm thấy loại dịch vụ với ID: ${createServiceDto.categoryId}`);
+      throw new NotFoundException(
+        `Không tìm thấy loại dịch vụ với ID: ${createServiceDto.categoryId}`,
+      );
     }
 
     const service = this.serviceRepository.create({
@@ -87,10 +93,13 @@ export class ServiceService {
     return newCode;
   }
 
-  async getAllServices(query: ServiceQueryDto): Promise<PaginatedServicesResponseDto> {
+  async getAllServices(
+    query: ServiceQueryDto,
+  ): Promise<PaginatedServicesResponseDto> {
     const { page = 1, limit = 10, name, code, categoryId } = query;
 
-    const queryBuilder = this.serviceRepository.createQueryBuilder('service')
+    const queryBuilder = this.serviceRepository
+      .createQueryBuilder('service')
       .leftJoinAndSelect('service.category', 'category')
       .orderBy('service.createdAt', 'DESC')
       .skip((page - 1) * limit)
@@ -133,7 +142,10 @@ export class ServiceService {
     return plainToInstance(ServiceResponseDto, service);
   }
 
-  async updateService(id: string, updateServiceDto: UpdateServiceDto): Promise<ServiceResponseDto> {
+  async updateService(
+    id: string,
+    updateServiceDto: UpdateServiceDto,
+  ): Promise<ServiceResponseDto> {
     const service = await this.serviceRepository.findOne({
       where: { id },
       relations: ['category'],
@@ -150,7 +162,9 @@ export class ServiceService {
       });
 
       if (existingService) {
-        throw new ConflictException(`Mã dịch vụ ${updateServiceDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã dịch vụ ${updateServiceDto.code} đã tồn tại`,
+        );
       }
     }
 
@@ -161,7 +175,9 @@ export class ServiceService {
       });
 
       if (!category) {
-        throw new NotFoundException(`Không tìm thấy loại dịch vụ với ID: ${updateServiceDto.categoryId}`);
+        throw new NotFoundException(
+          `Không tìm thấy loại dịch vụ với ID: ${updateServiceDto.categoryId}`,
+        );
       }
 
       service.category = category;
@@ -179,4 +195,4 @@ export class ServiceService {
       throw new NotFoundException(`Không tìm thấy dịch vụ với ID: ${id}`);
     }
   }
-} 
+}

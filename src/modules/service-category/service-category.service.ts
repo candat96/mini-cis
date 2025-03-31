@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
-import { ServiceCategory } from '../database/entities/service-category.entity';
+import { ILike, Repository } from 'typeorm';
 import {
   CreateServiceCategoryDto,
   PaginatedServiceCategoriesResponseDto,
@@ -10,6 +9,7 @@ import {
   ServiceCategoryResponseDto,
   UpdateServiceCategoryDto,
 } from './dto';
+import { ServiceCategory } from '../database/entities/service-category.entity';
 
 @Injectable()
 export class ServiceCategoryService {
@@ -31,11 +31,15 @@ export class ServiceCategoryService {
       });
 
       if (existingCategory) {
-        throw new ConflictException(`Mã loại dịch vụ ${createServiceCategoryDto.code} đã tồn tại`);
+        throw new ConflictException(
+          `Mã loại dịch vụ ${createServiceCategoryDto.code} đã tồn tại`,
+        );
       }
     }
 
-    const serviceCategory = this.serviceCategoryRepository.create(createServiceCategoryDto);
+    const serviceCategory = this.serviceCategoryRepository.create(
+      createServiceCategoryDto,
+    );
     const savedCategory = await this.serviceCategoryRepository.save(serviceCategory);
     return plainToInstance(ServiceCategoryResponseDto, savedCategory);
   }
@@ -147,4 +151,4 @@ export class ServiceCategoryService {
       throw new NotFoundException(`Không tìm thấy loại dịch vụ với ID: ${id}`);
     }
   }
-} 
+}

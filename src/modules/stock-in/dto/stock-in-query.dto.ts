@@ -56,4 +56,4 @@ export class StockInQueryDto {
   @IsDate()
   @Type(() => Date)
   toDate?: Date;
-} 
+}

@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -11,15 +12,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PatientService } from './patient.service';
-import { 
-  CreatePatientDto, 
-  PaginatedPatientsResponseDto, 
-  PatientQueryDto, 
-  PatientResponseDto, 
-  UpdatePatientDto 
+import {
+  CreatePatientDto,
+  PaginatedPatientsResponseDto,
+  PatientQueryDto,
+  PatientResponseDto,
+  UpdatePatientDto,
 } from './dto';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
+import { PatientService } from './patient.service';
 
 @ApiTags('Patients')
 @Controller('patients')
@@ -35,7 +35,9 @@ export class PatientController {
     description: 'Tạo bệnh nhân thành công',
     type: PatientResponseDto,
   })
-  async createPatient(@Body() createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
+  async createPatient(
+    @Body() createPatientDto: CreatePatientDto,
+  ): Promise<PatientResponseDto> {
     return this.patientService.createPatient(createPatientDto);
   }
 
@@ -46,7 +48,9 @@ export class PatientController {
     description: 'Lấy danh sách bệnh nhân thành công',
     type: PaginatedPatientsResponseDto,
   })
-  async getAllPatients(@Query() query: PatientQueryDto): Promise<PaginatedPatientsResponseDto> {
+  async getAllPatients(
+    @Query() query: PatientQueryDto,
+  ): Promise<PaginatedPatientsResponseDto> {
     return this.patientService.getAllPatients(query);
   }
 
@@ -97,4 +101,4 @@ export class PatientController {
   async deletePatient(@Param('id') id: string): Promise<void> {
     return this.patientService.deletePatient(id);
   }
-} 
+}

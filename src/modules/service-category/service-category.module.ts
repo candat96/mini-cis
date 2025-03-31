@@ -1,10 +1,10 @@
+import { Config } from '@config/config';
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ServiceCategory } from '../database/entities/service-category.entity';
 import { ServiceCategoryController } from './service-category.controller';
 import { ServiceCategoryService } from './service-category.service';
-import { JwtModule } from '@nestjs/jwt';
-import { Config } from '@config/config';
+import { ServiceCategory } from '../database/entities/service-category.entity';
 
 @Module({
   imports: [
@@ -18,4 +18,4 @@ import { Config } from '@config/config';
   providers: [ServiceCategoryService],
   exports: [ServiceCategoryService],
 })
-export class ServiceCategoryModule {} 
+export class ServiceCategoryModule {}

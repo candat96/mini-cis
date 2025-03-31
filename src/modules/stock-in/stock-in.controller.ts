@@ -1,3 +1,4 @@
+import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
 import {
   Body,
   Controller,
@@ -10,14 +11,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuardDecorator } from '@common/decorators/auth-guard.decorator';
-import { StockInService } from './stock-in.service';
 import {
   CreateStockInDto,
   PaginatedStockInsResponseDto,
   StockInQueryDto,
   StockInResponseDto,
 } from './dto';
+import { StockInService } from './stock-in.service';
 
 @ApiTags('Stock Ins')
 @Controller('stock-ins')
@@ -34,7 +34,9 @@ export class StockInController {
     description: 'Phiếu nhập kho đã được tạo thành công',
     type: StockInResponseDto,
   })
-  async create(@Body() createStockInDto: CreateStockInDto): Promise<StockInResponseDto> {
+  async create(
+    @Body() createStockInDto: CreateStockInDto,
+  ): Promise<StockInResponseDto> {
     return this.stockInService.createStockIn(createStockInDto);
   }
 
@@ -46,7 +48,9 @@ export class StockInController {
     description: 'Danh sách phiếu nhập kho được trả về thành công',
     type: PaginatedStockInsResponseDto,
   })
-  async findAll(@Query() query: StockInQueryDto): Promise<PaginatedStockInsResponseDto> {
+  async findAll(
+    @Query() query: StockInQueryDto,
+  ): Promise<PaginatedStockInsResponseDto> {
     return this.stockInService.getAllStockIns(query);
   }
 
@@ -58,7 +62,10 @@ export class StockInController {
     description: 'Thông tin phiếu nhập kho được trả về thành công',
     type: StockInResponseDto,
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Không tìm thấy phiếu nhập kho' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Không tìm thấy phiếu nhập kho',
+  })
   async findOne(@Param('id') id: string): Promise<StockInResponseDto> {
     return this.stockInService.getStockInById(id);
   }
@@ -70,8 +77,11 @@ export class StockInController {
     status: HttpStatus.NO_CONTENT,
     description: 'Phiếu nhập kho đã được xóa thành công',
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Không tìm thấy phiếu nhập kho' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Không tìm thấy phiếu nhập kho',
+  })
   async remove(@Param('id') id: string): Promise<void> {
     return this.stockInService.deleteStockIn(id);
   }
-} 
+}

@@ -16,4 +16,4 @@ export class UpdateMedicineCategoryDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

@@ -38,4 +38,4 @@ export class ServiceCategoryQueryDto {
   @IsOptional()
   @IsString()
   code?: string;
-} 
+}

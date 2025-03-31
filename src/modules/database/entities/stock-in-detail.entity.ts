@@ -33,4 +33,4 @@ export class StockInDetail extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   batchNumber: string;
-} 
+}

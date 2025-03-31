@@ -26,4 +26,4 @@ export class MedicineCategoryResponseDto {
   @Expose()
   @ApiProperty()
   updatedAt: Date;
-} 
+}

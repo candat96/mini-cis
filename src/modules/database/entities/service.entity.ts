@@ -18,4 +18,4 @@ export class Service extends BaseEntity {
 
   @ManyToOne(() => ServiceCategory, (category) => category.services)
   category: ServiceCategory;
-} 
+}
