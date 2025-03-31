@@ -1,5 +1,5 @@
 {
-  "name": "troy-docker",
+  "name": "mini-cis-bs",
   "version": "0.0.1",
   "description": "Base NestJS with docker and mysql",
   "author": "marco-bui",

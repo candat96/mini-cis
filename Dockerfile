@@ -12,12 +12,10 @@ RUN npm run build
 
 FROM node:20-alpine as deploy
 
-RUN npm i -g pm2
-
-WORKDIR /app
+COPY --from=build /app/package.json package.json
 
 COPY --from=build /app/node_modules ./node_modules
 
 COPY --from=build /app/dist ./dist
 
-CMD [ "pm2-runtime", "dist/apps/main.js" ]
+CMD [ "node", "dist/main.js" ]
