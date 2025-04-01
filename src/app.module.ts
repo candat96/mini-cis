@@ -8,6 +8,8 @@ import { InventoryModule } from '@modules/inventory/inventory.module';
 import { MedicineModule } from '@modules/medicine/medicine.module';
 import { MedicineCategoryModule } from '@modules/medicine-category/medicine-category.module';
 import { PatientModule } from '@modules/patient/patient.module';
+import { PrescriptionModule } from '@modules/prescription/prescription.module';
+import { ReportModule } from '@modules/report/report.module';
 import { ServiceModule } from '@modules/service/service.module';
 import { ServiceCategoryModule } from '@modules/service-category/service-category.module';
 import { StockInModule } from '@modules/stock-in/stock-in.module';
@@ -33,6 +35,8 @@ import { AppController } from './app.controller';
     StockOutModule,
     InventoryModule,
     AppointmentModule,
+    PrescriptionModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [WinstonLoggerService],
