@@ -12,7 +12,7 @@ services:
     volumes:
       - ./assets:/app/assets
     environment:
-      - UTC
+      - TZ=Asia/Ho_Chi_Minh
 
 networks:
   minicis:
